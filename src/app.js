@@ -1,9 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const morgan = require("morgan");
+const routes = require("./routes");
+
 
 const app = express();
-
+if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"));
+}
 /*
   Middleware to parse JSON body
 */
@@ -30,4 +35,5 @@ app.get("/health", (req, res) => {
   });
 });
 
+app.use("/api", routes);
 module.exports = app;
