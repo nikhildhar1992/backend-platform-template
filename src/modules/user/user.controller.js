@@ -4,20 +4,34 @@
 */
 
 const userService = require("./user.service");
-
+const asyncHandler = require("../../utils/asyncHandler");
 class UserController {
 
-  async getUsers(req, res) {
+  getUsers = asyncHandler(async (req, res, next) => {
+    try {
+      const users = await userService.getUsers();
+      res.json({
+        success: true,
+        data: users
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
-    const users = await userService.getUsers();
-
-    res.json({
+  createUser = asyncHandler(async (req, res, next) => {
+    try {
+    const user = await userService.createUser(req.body);
+  
+    res.status(201).json({
       success: true,
-      data: users
+      data: user
     });
+    } catch (error) {
+      next(error);
+    }
+  });
 
-  }
-
-}
+};
 
 module.exports = new UserController();

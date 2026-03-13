@@ -4,18 +4,35 @@
 */
 
 class UserRepository {
-
+   data = [
+    { id: 1, name: "Nik", email: "nik@example.com" },
+    { id: 2, name: "Nikhil", email: "nikhil@example.com" }
+  ];
     async getAllUsers() {
   
       /*
        Later we will fetch from MySQL
       */
   
-      return [
-        { id: 1, name: "John" },
-        { id: 2, name: "Jane" }
-      ];
+      return this.data;
     }
+
+    async createUser(data) {
+
+        return {
+          id: Date.now(),
+          ...data
+        };
+      
+      }
+
+      async findByEmail(email) {
+        const user = this.data.find(user => user.email === email);
+        if (!user) {
+          return null;
+        }
+        return user;
+      }
   
   }
   
