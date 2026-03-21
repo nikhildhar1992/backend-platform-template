@@ -4,12 +4,12 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/error.middleware");
-
+const { requestIdMiddleware } = require("./middlewares/requestId.middleware");
 const app = express();
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
-
+app.use(requestIdMiddleware);
 /*
   Middleware to parse JSON body
 */

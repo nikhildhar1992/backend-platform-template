@@ -7,6 +7,7 @@ const errorHandler = (err, req, res, next) => {
 
     const statusCode = err.statusCode || 500;
     logger.error({
+      requestId: req.requestId,
       message: err.message,
       stack: err.stack,
       method: req.method,

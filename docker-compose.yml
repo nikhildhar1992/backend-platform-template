@@ -1,0 +1,49 @@
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Nikhil@123
+      MYSQL_DATABASE: backend_template
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  # API — connects to mysql + redis via Docker network (hostnames: mysql, redis)
+  api:
+    build: .
+    container_name: api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env.docker
+    depends_on:
+      - mysql
+      - redis
+    command: ["node", "src/server.js"]
+
+  # BullMQ email worker — Redis only for queues (same REDIS_URL)
+  worker:
+    build: .
+    container_name: worker-email
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    depends_on:
+      - redis
+      - mysql
+    command: ["node", "src/workers/email.worker.js"]
+
+volumes:
+  db_data:
