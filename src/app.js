@@ -2,18 +2,26 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const sanitizeBody = require("./middlewares/sanitize.middleware");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/error.middleware");
 const { requestIdMiddleware } = require("./middlewares/requestId.middleware");
 const app = express();
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger.js");
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Helps req.ip match real client IP when behind a proxy; also stabilizes rate-limit keys in some setups
+app.set("trust proxy", process.env.TRUST_PROXY === "1" ? 1 : false);
+
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
+
 app.use(requestIdMiddleware);
 /*
   Middleware to parse JSON body
 */
-app.use(express.json());
 
 /*
   Security middleware
@@ -23,18 +31,15 @@ app.use(helmet());
 /*
   Enable cross origin requests
 */
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5000"], // later restrict
+  methods: ["GET", "POST", "PUT", "DELETE"]
+}));
 
-/*
-  Health check endpoint
-  Used by load balancers / monitoring tools
-*/
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "OK",
-    uptime: process.uptime(),
-  });
-});
+app.disable("x-powered-by");
+app.use(express.json({ limit: "10kb" }));
+// After JSON parse — Express 5–safe: only mutates req.body (not req.query)
+app.use(sanitizeBody);
 
 app.use("/api", routes);
 

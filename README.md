@@ -1,28 +1,46 @@
-## Setup Project
+# Backend Platform Template (Node.js + MYsql + Redis + Docker)
 
-### Option A — Run API on your machine (MySQL + Redis in Docker)
+🚀 Overview
+A production-ready backend template built with Node.js, designed with clean architecture and scalability in mind.
 
-1. `docker compose up -d mysql redis` (only DB + Redis)
-2. `npm install`
-3. `npm run setup-db`
-4. `npm run seed` (optional)
-5. Terminal 1: `npm run dev`
-6. Terminal 2: `npm run worker:email`
+Includes authentication, caching, background jobs, rate limiting, and Docker-based setup.
 
-Use `.env` with `DB_HOST=localhost`, `DB_PORT=3307`, `REDIS_URL=redis://localhost:6379`.  
-Set `ENABLE_REDIS_CACHE=true` if you want Redis caching for user lists; otherwise omit or set `false` (BullMQ still uses `REDIS_URL`).
+⚙️ Tech Stack
+- Nodejs + Express
+- MySQL
+- Redis
+- BullMQ (background jobs)
+- Docker & Docker compose
+- JWT Authentication
+- Swagger (API Docs)
 
-### Option B — API + BullMQ worker in Docker (MySQL + Redis + app in Docker)
+🏗️ Architecture
+Controller → Service → Repository → Database
+- Clean architecture
+- Separation of concerns
+- Scalable design
 
-1. Ensure `.env.docker` exists (see repo file — uses `DB_HOST=mysql`, `DB_PORT=3306`, `REDIS_URL=redis://redis:6379`, `ENABLE_REDIS_CACHE=false`).
-2. `docker compose build`
-3. `docker compose up -d`
-4. Initialize DB once (from host, pointing at published MySQL port):  
-   `npm run setup-db`  
-   (uses `.env` — keep `DB_PORT=3307` to match `3307:3306` mapping)  
-   Or: `docker compose exec api node src/scripts/setupDb.js` if you inject env into `api` container.
+🔥 Features
+- JWT Authentication & RBAC
+- Pagination, Filtering, Sorting
+- Redis Caching (with invalidation)
+- Background Jobs (BullMQ)
+- Retry & Failure Handling
+- Rate Limiting (IP + User)
+- Security (Helmet, CORS, Sanitization)
+- Swagger API Documentation
+- Health Check Endpoints
+- Dockerized Setup
 
-API: `http://localhost:5000`  
-Worker logs: `docker compose logs -f worker`
+🐳 Setup Instructions
+## Run with Docker
+docker-compose up -d
+npm run setup:db
+npm run seed
+npm run dev
+📄 API Docs
+http://localhost:5000/api-docs
 
-BullMQ data lives in Redis; inspect with `docker exec -it redis redis-cli` and `SCAN 0 MATCH "bull:*" COUNT 100`.
+🧪 Sample Credentials
+email: user1@test.com  
+password: 123456
