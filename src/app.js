@@ -32,7 +32,8 @@ app.use(helmet());
   Enable cross origin requests
 */
 app.use(cors({
-  origin: ["http://localhost:5000"], // later restrict
+  // CRA dev server (React + TS); backend itself; tighten in production
+  origin: ["http://localhost:3000", "http://localhost:5000"],
   methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 
