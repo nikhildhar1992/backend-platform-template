@@ -1,46 +1,80 @@
-# Backend Platform Template (Node.js + MYsql + Redis + Docker)
+# Backend Platform Template (Node.js + MySQL + Redis + Docker)
 
-🚀 Overview
-A production-ready backend template built with Node.js, designed with clean architecture and scalability in mind.
+## Overview
 
-Includes authentication, caching, background jobs, rate limiting, and Docker-based setup.
+Production-oriented Node.js API with clean layering, auth, caching, background jobs, rate limiting, and Docker support.
 
-⚙️ Tech Stack
-- Nodejs + Express
-- MySQL
-- Redis
-- BullMQ (background jobs)
-- Docker & Docker compose
-- JWT Authentication
-- Swagger (API Docs)
+## Tech stack
 
-🏗️ Architecture
-Controller → Service → Repository → Database
-- Clean architecture
-- Separation of concerns
-- Scalable design
+- Node.js + Express  
+- MySQL  
+- Redis  
+- BullMQ (background jobs)  
+- Docker Compose  
+- JWT, Swagger, health checks  
 
-🔥 Features
-- JWT Authentication & RBAC
-- Pagination, Filtering, Sorting
-- Redis Caching (with invalidation)
-- Background Jobs (BullMQ)
-- Retry & Failure Handling
-- Rate Limiting (IP + User)
-- Security (Helmet, CORS, Sanitization)
-- Swagger API Documentation
-- Health Check Endpoints
-- Dockerized Setup
+## Architecture
 
-🐳 Setup Instructions
-## Run with Docker
-docker-compose up -d
-npm run setup:db
-npm run seed
-npm run dev
-📄 API Docs
-http://localhost:5000/api-docs
+Controller → Service → Repository → Database  
 
-🧪 Sample Credentials
-email: user1@test.com  
-password: 123456
+---
+
+## Recommended local dev: **API on the machine, MySQL + Redis in Docker only**
+
+You do **not** need MySQL or Redis installed on Windows. Run **only** the DB/cache containers, then the API with Node.
+
+1. **Start MySQL + Redis (Docker only)**
+
+   ```bash
+   docker compose up -d mysql redis
+   ```
+
+2. **Configure `.env`** in this repo (host connects to published ports):
+
+   - `DB_HOST=localhost`  
+   - `DB_PORT=3307` (maps to MySQL `3306` in the container — see `docker-compose.yml`)  
+   - `REDIS_URL=redis://localhost:6379`  
+   - Plus `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET`, `GEMINI_API_KEY`, etc.
+
+3. **Install and migrate**
+
+   ```bash
+   npm install
+   npm run setup-db
+   npm run seed
+   ```
+
+4. **Run the API (and worker if you use queues)**
+
+   ```bash
+   npm run dev
+   ```
+
+   Optional second terminal: `npm run worker:email`
+
+5. **Frontend** (if you use the sibling project): `npm start` there; API stays at `http://localhost:5000`.
+
+**Summary:** MySQL/Redis = **Docker only**. Node API = **your machine**, talking to `localhost:3307` and `localhost:6379`.
+
+---
+
+## Full stack in Docker (API + worker + MySQL + Redis)
+
+When you want everything containerized:
+
+```bash
+docker compose up -d --build
+```
+
+Uses `.env.docker` (service hostnames `mysql`, `redis`). See comments in `docker-compose.yml`.
+
+---
+
+## API docs
+
+http://localhost:5000/api-docs  
+
+## Sample seed user
+
+email: `user1@test.com`  
+password: `123456`

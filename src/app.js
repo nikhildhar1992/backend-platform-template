@@ -38,7 +38,7 @@ app.use(cors({
 }));
 
 app.disable("x-powered-by");
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json({ limit: "1mb" }));
 // After JSON parse — Express 5–safe: only mutates req.body (not req.query)
 app.use(sanitizeBody);
 

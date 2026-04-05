@@ -19,7 +19,7 @@ const config = {
     expiresIn: process.env.JWT_EXPIRES || "1d"
   },
 
+  // Full ai.config export: config.ai.gemini.* (see gemini.adapter.js, health, etc.)
   ai
 };
-
 module.exports = config;

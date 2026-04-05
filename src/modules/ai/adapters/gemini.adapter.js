@@ -23,6 +23,8 @@ function getGeminiSettings() {
   if (cachedSettings) {
     return cachedSettings;
   }
+  console.log('config.aiconfig.ai',config.ai);
+  console.log(config.ai.gemini);
   const { apiKey, llmModel, embeddingModel } = config.ai.gemini;
   if (!apiKey || !String(apiKey).trim()) {
     throw new AppError("Gemini API key is not configured", 503);
